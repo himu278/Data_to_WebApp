@@ -3,15 +3,9 @@ import pandas as pd
 import altair as alt
 import os
 
-# Set up Streamlit app - Make sure this is at the very top of your script
-st.set_page_config(layout="wide")
-
 # Load the data
 file_path = "D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls"
 df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlrd')
-
-# Convert 'Median Annual Advertised Salary' to numeric (removes dollar signs and commas)
-df['Median Annual Advertised Salary'] = pd.to_numeric(df['Median Annual Advertised Salary'].replace({'\$': '', ',': ''}, regex=True), errors='coerce')
 
 # Create the 'State Name' column by extracting state abbreviation
 df['State Name'] = df['County Name'].str.split(',').str[-1].str.strip()
@@ -19,10 +13,11 @@ df['State Name'] = df['County Name'].str.split(',').str[-1].str.strip()
 # Convert the 'State Name' column to uppercase
 df['State Name'] = df['State Name'].str.upper()
 
-# Set the title for the Streamlit app
+# Set up Streamlit app - Make sure this is at the very top of your script
+st.set_page_config(layout="wide")
 st.title("Job Postings Dashboard (STEM Occupations)")
 
-# Sidebar Filters with increased width
+# Sidebar Filters
 states = df['State Name'].unique()
 
 # Ensure unique states are listed only once
@@ -104,3 +99,16 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+# Create a selectbox for counties in the selected state
+counties_in_state = filtered_df['County Name'].unique()
+selected_county = st.selectbox('Select a County to view details:', counties_in_state)
+
+# Filter by selected county
+county_data = filtered_df[filtered_df['County Name'] == selected_county]
+
+# Display the selected county details
+st.subheader(f"Details for {selected_county}")
+st.metric("Median Salary", f"${county_data['Median Annual Advertised Salary'].values[0]:,.0f}")
+st.metric("Unique Postings", f"{county_data['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
+st.metric("Posting Duration", f"{county_data['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
