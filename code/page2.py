@@ -19,20 +19,17 @@ df['State Name'] = df['County Name'].str.split(',').str[-1].str.strip()
 # Convert the 'State Name' column to uppercase
 df['State Name'] = df['State Name'].str.upper()
 
-# Remove any leading/trailing spaces or special characters that might cause issues
-df['State Name'] = df['State Name'].str.replace(r'[^A-Za-z0-9 ]', '', regex=True)
-
 # Set the title for the Streamlit app
 st.title("Job Postings Dashboard (STEM Occupations)")
 
-# Sidebar Filters
+# Sidebar Filters with increased width
 states = df['State Name'].unique()
 
 # Ensure unique states are listed only once
 states = [state for state in states if pd.notnull(state)]
 
-# Sort and display the states in the sidebar
-selected_state = st.sidebar.selectbox("Select a State", sorted(states))
+# Sort and display the states in the sidebar with enhanced visibility
+selected_state = st.sidebar.selectbox("Select a State", sorted(states), key="state_select")
 
 # Filter by selected state
 filtered_df = df[df['State Name'] == selected_state]
@@ -101,6 +98,9 @@ st.markdown("""
     <style>
         .st-bd {
             padding: 5%;
+        }
+        .stSidebar > div {
+            width: 350px;  /* Adjust the sidebar width */
         }
     </style>
 """, unsafe_allow_html=True)
