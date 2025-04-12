@@ -27,10 +27,27 @@ if page == "Job Postings Dashboard":
     filtered_df = df[df['State Name'] == selected_state]
 
     # Display metrics for selected state
-    st.subheader(f"Key Metrics for {selected_state}")
-    st.metric("Median Salary", f"${filtered_df['Median Annual Advertised Salary'].values[0]:,.0f}")
-    st.metric("Unique Postings", f"{filtered_df['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
-    st.metric("Posting Duration", f"{filtered_df['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+    st.subheader(f"Key Metrics for {selected_state} state")
+
+    # Find the row with the highest and lowest "Median Annual Advertised Salary"
+    highest_salary_row = filtered_df.loc[filtered_df['Median Annual Advertised Salary'].idxmax()]
+    lowest_salary_row = filtered_df.loc[filtered_df['Median Annual Advertised Salary'].idxmin()]
+
+    # Display the highest and lowest "Median Annual Advertised Salary" with their respective county names
+    st.metric(
+        "Highest Median Annual Advertised Salary",
+        f"${highest_salary_row['Median Annual Advertised Salary']:,.0f} in {highest_salary_row['County Name']}"
+    )
+    st.metric(
+        "Lowest Median Annual Advertised Salary",
+        f"${lowest_salary_row['Median Annual Advertised Salary']:,.0f} in {lowest_salary_row['County Name']}"
+    )
+
+        
+
+    #st.metric("Median Salary", f"${filtered_df['Median Annual Advertised Salary'].values[0]:,.0f}")
+    #st.metric("Unique Postings", f"{filtered_df['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
+    #st.metric("Posting Duration", f"{filtered_df['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
 
     # Plot 1: Median Annual Advertised Salary (Y-axis updated)
     chart1 = alt.Chart(filtered_df).mark_bar().encode(
@@ -155,4 +172,4 @@ elif page == "Top Companies Job Postings":
 # Run this lines in the Terminal
 # cd code  # Navigate into the 'code' folder
 # streamlit run data_to_web.py  # Run the Streamlit app
-# streamlit run test.py  # Run the Streamlit app
+
