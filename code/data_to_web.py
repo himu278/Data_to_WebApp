@@ -1,32 +1,39 @@
+# Import necessary libraries & Load the data
 import streamlit as st
 import pandas as pd
 import os
 
 # Load the data
-#file_path = os.path.expanduser("~/Desktop/h/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls")
 file_path = "D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls"
 df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlrd')
 
+# Create the 'State Name' column by extracting state abbreviation
+df['State Name'] = df['County Name'].str.split(',').str[-1].str.strip()
+
+# Convert the 'State Name' column to uppercase
+df['State Name'] = df['State Name'].str.upper()
+
+
+# Set up Streamlit app
 st.set_page_config(layout="wide")
 st.title("Job Postings Dashboard (STEM Occupations)")
 
 # Sidebar Filters
-counties = df['County Name'].unique()
-selected_county = st.sidebar.selectbox("Select a County", sorted(counties))
+states = df['State Name'].unique()
+selected_state = st.sidebar.selectbox("Select a State", sorted(states))
 
-filtered_df = df[df['County Name'] == selected_county]
+# Filter by selected state
+filtered_df = df[df['State Name'] == selected_state]
 
-# Display metrics
-st.subheader(f"Key Metrics for {selected_county}")
-st.metric("Median Salary", f"${filtered_df['Median Annual Advertised Salary'].values[0]:,.0f}")
-st.metric("Unique Postings", f"{filtered_df['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
-st.metric("Posting Duration", f"{filtered_df['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+# # Display metrics
+# st.subheader(f"Key Metrics for {selected_state}")
+# st.metric("Median Salary", f"${filtered_df['Median Annual Advertised Salary'].values[0]:,.0f}")
+# st.metric("Unique Postings", f"{filtered_df['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
+# st.metric("Posting Duration", f"{filtered_df['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+
 
 
 import altair as alt
-
-# Filter top 5 counties with the highest number of unique job postings (Jan–Dec 2023)
-# #top5_df = filtered_df.nlargest(5,'Unique Postings from Jan 2023 - Dec 2023')
 
 #  Create an interactive bar chart using Altair
 chart = (
@@ -50,7 +57,7 @@ chart = (
     .interactive()
 )
 
-#  Step 3: Display the chart in your Streamlit app
+#  Display the chart in your Streamlit app
 st.altair_chart(chart, use_container_width=True)
 
 
