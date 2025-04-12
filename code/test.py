@@ -11,38 +11,12 @@ df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlr
 df['State Name'] = df['County Name'].str.split(',').str[-1].str.strip()
 df['State Name'] = df['State Name'].str.upper()
 
-# --- Sidebar Navigation ---
-st.set_page_config(layout="wide")
-page = st.sidebar.selectbox("Choose a page", ["Job Postings Dashboard", "Top Companies Job Postings"])
-
-# --- Job Postings Dashboard (State and County Filters) ---
-if page == "Job Postings Dashboard":
-    st.title("Job Postings Dashboard (STEM Occupations)")
-    
-    # Sidebar filter by State
-    states = df['State Name'].unique()
-    selected_state = st.sidebar.selectbox("Select a State", sorted(states))
-
-    # Filter data by selected state
-    filtered_df = df[df['State Name'] == selected_state]
-
-    # Display metrics for selected state
-    st.subheader(f"Key Metrics for {selected_state}")
-    st.metric("Median Salary", f"${filtered_df['Median Annual Advertised Salary'].values[0]:,.0f}")
-    st.metric("Unique Postings", f"{filtered_df['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
-    st.metric("Posting Duration", f"{filtered_df['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
-
-    # Create an interactive bar chart for Unique Postings by County
-    chart = alt.Chart(filtered_df).mark_bar().encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name'),
-        y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
-        color=alt.value('darkgreen')
-    ).properties(title='County by Unique Job Postings (Jan–Dec 2023)').interactive()
-
-    st.altair_chart(chart, use_container_width=True)
+# --- Page Navigation in the Upper Bar ---
+# Add a "Choose a page" dropdown at the top
+page = st.selectbox("Choose a Page", ["Top Companies Job Postings", "Job Postings Dashboard"])
 
 # --- Top Companies Job Postings ---
-elif page == "Top Companies Job Postings":
+if page == "Top Companies Job Postings":
     st.title("Top Companies Job Postings (STEM Occupations)")
 
     # Load Top Companies Data
@@ -68,7 +42,7 @@ elif page == "Top Companies Job Postings":
     else:
         sort_col = 'Total Postings (Jan 2023 - Dec 2023)'
 
-    # Slicer for Top N Companies
+    # Slicer for selecting Top N Companies
     max_companies = len(company_df)
     top_n = st.slider("Select number of top companies to display", min_value=1, max_value=max_companies, value=5)
 
@@ -131,3 +105,30 @@ elif page == "Top Companies Job Postings":
         st.caption("The value shown on each bar is the ratio of Total to Unique Postings.")
     else:
         st.caption("The value shown on each bar is the Median Posting Duration (in days).")
+
+
+# --- Job Postings Dashboard (State and County Filters) ---
+elif page == "Job Postings Dashboard":
+    st.title("Job Postings Dashboard (STEM Occupations)")
+    
+    # Sidebar filter by State
+    states = df['State Name'].unique()
+    selected_state = st.sidebar.selectbox("Select a State", sorted(states))
+
+    # Filter data by selected state
+    filtered_df = df[df['State Name'] == selected_state]
+
+    # Display metrics for selected state
+    st.subheader(f"Key Metrics for {selected_state}")
+    st.metric("Median Salary", f"${filtered_df['Median Annual Advertised Salary'].values[0]:,.0f}")
+    st.metric("Unique Postings", f"{filtered_df['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
+    st.metric("Posting Duration", f"{filtered_df['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+
+    # Create an interactive bar chart for Unique Postings by County
+    chart = alt.Chart(filtered_df).mark_bar().encode(
+        x=alt.X('County Name:N', sort='-y', title='County Name'),
+        y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
+        color=alt.value('darkgreen')
+    ).properties(title='County by Unique Job Postings (Jan–Dec 2023)').interactive()
+
+    st.altair_chart(chart, use_container_width=True)
