@@ -1,7 +1,12 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import folium
+from geopy.geocoders import Nominatim
+from folium.plugins import MarkerCluster
 import os
+import time
+import streamlit.components.v1 as components  # To render the folium map
 
 # Load the data
 file_path = "D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls"
@@ -43,21 +48,51 @@ st.metric(
     f"${lowest_salary_row['Median Annual Advertised Salary']:,.0f} in {lowest_salary_row['County Name']}"
 )
 
+# Geolocator with User-Agent
+geolocator = Nominatim(user_agent="my_job_postings_app")
 
-###
-# Create a selectbox for counties in the selected state
-counties_in_state = filtered_df['County Name'].unique()
-selected_county = st.selectbox('Select a County to view details:', counties_in_state)
+# Function to get latitude and longitude with error handling
+def geocode_county(county):
+    try:
+        location = geolocator.geocode(county)
+        if location:
+            return location.latitude, location.longitude
+        else:
+            st.warning(f"Location not found for: {county}")
+            return None, None
+    except Exception as e:
+        st.error(f"Error geocoding {county}: {e}")
+        return None, None
 
-# Filter by selected county
-county_data = filtered_df[filtered_df['County Name'] == selected_county]
+# Clean the county names
+df['County Name'] = df['County Name'].str.strip()  # Remove any leading/trailing whitespace
 
-# Display the selected county details
-st.subheader(f"Details for {selected_county}")
-st.metric("Median Salary", f"${county_data['Median Annual Advertised Salary'].values[0]:,.0f}")
-st.metric("Unique Postings", f"{county_data['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
-st.metric("Posting Duration", f"{county_data['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+# Create a map centered around the US (you can adjust this as per your needs)
+map_center = [37.0902, -95.7129]  # Approximate center of the US
+map_obj = folium.Map(location=map_center, zoom_start=5)
 
+# Add county markers to the map
+marker_cluster = MarkerCluster().add_to(map_obj)
+
+# Loop through counties and add markers with delay
+for index, row in filtered_df.iterrows():
+    county_name = row['County Name']
+    latitude, longitude = geocode_county(county_name)
+    if latitude and longitude:
+        folium.Marker(
+            location=[latitude, longitude],
+            popup=f"{county_name}: {row['Median Annual Advertised Salary']}",
+            icon=folium.Icon(color="blue", icon="info-sign")
+        ).add_to(marker_cluster)
+    time.sleep(1)  # Adding delay of 1 second between requests
+
+# Render the folium map in Streamlit
+st.title("Job Postings Location Map")
+st.subheader("Map showing counties with job posting information")
+st.write("Click on a marker for more details.")
+# Render the folium map using Streamlit components
+map_html = map_obj._repr_html_()  # Get the HTML representation of the map
+components.html(map_html, height=600)  # Display the map in Streamlit
 
 # Add visual chart for Median Salary, Median Posting Duration, and Unique Postings
 # First Plot - Median Salary
@@ -105,7 +140,7 @@ st.altair_chart(chart_2, use_container_width=True)
 st.altair_chart(chart_3, use_container_width=True)
 
 # Add some additional customization for clarity
-st.markdown("""
+st.markdown(""" 
     <style>
         .st-bd {
             padding: 5%;
@@ -115,4 +150,3 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-
