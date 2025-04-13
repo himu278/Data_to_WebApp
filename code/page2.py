@@ -18,6 +18,12 @@ df['State Name'] = df['County Name'].str.split(',').str[-1].str.strip()
 # Convert the 'State Name' column to uppercase
 df['State Name'] = df['State Name'].str.upper()
 
+# Clean 'Median Annual Advertised Salary' to numeric
+df['Median Annual Advertised Salary'] = pd.to_numeric(df['Median Annual Advertised Salary'], errors='coerce')
+
+# Handle missing values or errors
+df = df.dropna(subset=['Median Annual Advertised Salary'])
+
 # Set up Streamlit app - Make sure this is at the very top of your script
 st.set_page_config(layout="wide")
 st.title("Job Postings Dashboard (STEM Occupations)")
