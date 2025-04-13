@@ -1,7 +1,6 @@
 # Run this lines in the Terminal
-cd code  # Navigate into the 'code' folder
-#
-streamlit run data_to_web.py  # Run the Streamlit app
+- cd code  # Navigate into the 'code' folder
+- streamlit run data_to_web.py  # Run the Streamlit app
 
 
 # Data_to_WebApp
