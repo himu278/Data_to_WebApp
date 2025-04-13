@@ -114,6 +114,26 @@ st.write("Hover over a marker for more details.")
 map_html = map_obj._repr_html_()  # Get the HTML representation of the map
 components.html(map_html, height=600)  # Display the map in Streamlit
 
+###
+# Create a selectbox for counties in the selected state
+counties_in_state = filtered_df['County Name'].unique()
+selected_county = st.selectbox('Select a County to view details:', counties_in_state)
+
+# Filter by selected county
+county_data = filtered_df[filtered_df['County Name'] == selected_county]
+
+# Display the selected county details
+st.subheader(f"Details for {selected_county}")
+st.metric("Median Salary", f"${county_data['Median Annual Advertised Salary'].values[0]:,.0f}")
+st.metric("Unique Postings", f"{county_data['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
+st.metric("Posting Duration", f"{county_data['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+
+
+
+
+
+
+###
 # Add visual chart for Median Salary, Median Posting Duration, and Unique Postings
 # First Plot - Median Salary
 chart_1 = (
