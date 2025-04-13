@@ -81,7 +81,12 @@ for index, row in filtered_df.iterrows():
     if latitude and longitude:
         folium.Marker(
             location=[latitude, longitude],
-            popup=f"{county_name}: {row['Median Annual Advertised Salary']}",
+            popup=folium.Popup(f"""
+                <b>County:</b> {county_name}<br>
+                <b>Median Salary:</b> ${row['Median Annual Advertised Salary']}<br>
+                <b>Unique Postings:</b> {row['Unique Postings from Jan 2023 - Dec 2023']}<br>
+                <b>Median Posting Duration:</b> {row['Median Posting Duration from Jan 2023 - Dec 2023']} days
+            """, max_width=300),  # Customizable popup size
             icon=folium.Icon(color="blue", icon="info-sign")
         ).add_to(marker_cluster)
     time.sleep(1)  # Adding delay of 1 second between requests
