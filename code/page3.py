@@ -17,20 +17,26 @@ def load_data():
 
 df = load_data()
 
-# Professional Header using HTML
+# Professional Header using HTML and CSS
 st.markdown("""
     <style>
+        /* General styles for the page */
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #2c3e50;
+            background-color: #ecf0f1;
+        }
         .header {
             text-align: center;
-            padding: 60px;
-            background-color: #2c3e50;
+            padding: 40px;
+            background-color: #2980b9;  /* Blue background */
             color: white;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 40px;
         }
         .header h1 {
-            font-size: 48px;
+            font-size: 36px;  /* Smaller font size */
             font-weight: 700;
             letter-spacing: 3px;
             text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
@@ -39,26 +45,49 @@ st.markdown("""
             font-size: 18px;
             margin-top: 10px;
             font-weight: 400;
+            color: #ecf0f1;
         }
+
         .section-header {
             font-size: 24px;
             font-weight: 600;
             margin-top: 30px;
             color: #34495e;
         }
+
         .description {
             font-size: 16px;
             color: #7f8c8d;
             margin-bottom: 30px;
         }
+
         .stSlider {
             margin-top: 20px;
         }
+
         .stSelectbox, .stDateInput, .stCheckbox {
             margin-bottom: 20px;
         }
+
+        .stMarkdown {
+            font-size: 16px;
+        }
+
+        .stButton {
+            margin-top: 20px;
+        }
+
+        /* Animation styles */
+        .fadeIn {
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
     </style>
-    <div class="header">
+    <div class="header fadeIn">
         <h1>Job Postings Time Series Dashboard</h1>
         <p>Explore and analyze trends in job postings over time with detailed visualizations and forecasts.</p>
     </div>
@@ -68,7 +97,6 @@ st.markdown("""
 st.write("""
     This tool allows you to explore job posting trends over time and forecast future postings using a SARIMA model.
     You can filter the data by selecting a custom date range, fine-tune the model parameters, and view projected job posting trends.
-    You can filter the data based on a custom date range, adjust model parameters, and see forecasts for job postings.
 """)
 
 # Date Range Picker
