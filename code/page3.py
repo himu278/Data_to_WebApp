@@ -20,12 +20,13 @@ df = load_data()
 # Streamlit App Layout
 st.title("Job Postings Time Series Dashboard")
 st.write("""
-    This app allows you to visualize job posting trends over time and forecast future job postings using a SARIMA model.
+    This tool allows you to explore job posting trends over time and forecast future postings using a SARIMA model.
+    You can filter the data by selecting a custom date range, fine-tune the model parameters, and view projected job posting trends.
     You can filter the data based on a custom date range, adjust model parameters, and see forecasts for job postings.
 """)
 
 # Date Range Picker
-st.write("### Step 1: Filter the Data by Date Range")
+st.write("### Filter the Data by Date Range")
 st.write("Select the start and end dates for the data you'd like to analyze.")
 min_date = df["Month"].min().date()
 max_date = df["Month"].max().date()
