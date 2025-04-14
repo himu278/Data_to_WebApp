@@ -123,20 +123,27 @@ map_html = map_obj._repr_html_()  # Get the HTML representation of the map
 components.html(map_html, height=600)  # Display the map in Streamlit
 
 ###
-# Added map footer
+# Added map footer with missing locations
 if missing_locations:
-    missing_text = "<br>".join([f"• {location}" for location in missing_locations])
+    # Create a bullet list with line breaks
+    locations_html = "<br>".join([f"• {location}" for location in missing_locations])
+    
+    st.markdown(f"""
+        <footer>
+            <p style="font-size:14px; color:gray;">
+                Some locations cannot be located by this service.<br>
+                {locations_html}
+            </p>
+        </footer>
+    """, unsafe_allow_html=True)
 else:
-    missing_text = ""
-
-st.markdown(f"""
-    <footer>
-        <p style="font-size:14px; color:gray;">
-            Some locations cannot be located by this service.
-            {missing_text}
-        </p>
-    </footer>
-""", unsafe_allow_html=True)
+    st.markdown("""
+        <footer>
+            <p style="font-size:14px; color:gray;">
+                Some locations cannot be located by this service.
+            </p>
+        </footer>
+    """, unsafe_allow_html=True)
 
 
 ###
