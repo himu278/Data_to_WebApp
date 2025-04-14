@@ -17,8 +17,32 @@ def load_data():
 
 df = load_data()
 
+# Professional Header using HTML
+st.markdown("""
+    <style>
+        .header {
+            text-align: center;
+            padding: 50px;
+            background-color: #007bff;
+            color: white;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .header p {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+    <div class="header">
+        <h1>Job Postings Time Series Dashboard</h1>
+        <p>Explore and analyze trends in job postings over time with detailed visualizations and forecasts.</p>
+    </div>
+""", unsafe_allow_html=True)
+
 # Streamlit App Layout
-st.title("Job Postings Time Series Dashboard")
 st.write("""
     This tool allows you to explore job posting trends over time and forecast future postings using a SARIMA model.
     You can filter the data by selecting a custom date range, fine-tune the model parameters, and view projected job posting trends.
@@ -26,7 +50,7 @@ st.write("""
 """)
 
 # Date Range Picker
-st.write("### Filter the Data by Date Range")
+st.write("### Step 1: Filter the Data by Date Range")
 st.write("Select the start and end dates for the data you'd like to analyze.")
 min_date = df["Month"].min().date()
 max_date = df["Month"].max().date()
