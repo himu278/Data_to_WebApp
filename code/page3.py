@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 # Load the data
@@ -43,15 +43,29 @@ filtered_df = df[(df["Month"] >= start_date) & (df["Month"] <= end_date)]
 if st.checkbox("Show Raw Data"):
     st.dataframe(filtered_df)
 
-# Plot the raw data
+# Plot the raw data using Plotly
 st.subheader("Raw Time Series of Unique Job Postings")
-plt.figure(figsize=(10, 6))
-plt.plot(filtered_df["Month"], filtered_df["Unique Postings"])
-plt.title("Unique Job Postings Over Time")
-plt.xlabel("Month")
-plt.ylabel("Unique Postings")
-plt.grid(True)
-st.pyplot(plt)
+fig = go.Figure()
+
+# Add trace for the actual job postings
+fig.add_trace(go.Scatter(
+    x=filtered_df['Month'],
+    y=filtered_df['Unique Postings'],
+    mode='lines+markers',
+    name='Actual Job Postings',
+    text=filtered_df['Unique Postings'],  # Tooltip with unique postings value
+    hovertemplate='<b>%{x}</b><br>Unique Postings: %{text}<extra></extra>',  # Hover info
+))
+
+fig.update_layout(
+    title="Unique Job Postings Over Time",
+    xaxis_title="Month",
+    yaxis_title="Unique Postings",
+    hovermode="closest",  # Show the hover details closest to the cursor
+    template="plotly_dark"
+)
+
+st.plotly_chart(fig)
 
 # Preprocessing: Take log of the data for stabilization
 filtered_df['log_postings'] = np.log(filtered_df['Unique Postings'])
@@ -110,17 +124,43 @@ forecast_index = pd.date_range(start=filtered_df['Month'].iloc[-1], periods=fore
 # Convert forecasted values from log scale back to original scale
 forecast_values = np.exp(forecast.predicted_mean)
 
-# Plot the forecast alongside the historical data
+# Plot the forecast alongside the historical data using Plotly
 st.subheader(f"SARIMA Forecast for Unique Job Postings (Next {forecast_steps} months)")
-plt.figure(figsize=(10, 6))
-plt.plot(filtered_df["Month"], filtered_df["Unique Postings"], label="Actual")
-plt.plot(forecast_index, forecast_values, label="Forecast", linestyle='dashed', color='red')
-plt.title("Job Postings with SARIMA Forecast")
-plt.xlabel("Month")
-plt.ylabel("Unique Postings")
-plt.legend()
-plt.grid(True)
-st.pyplot(plt)
+
+show_forecast = st.checkbox("Show Forecast Plot", value=True)  # Allow user to toggle forecast visibility
+if show_forecast:
+    fig = go.Figure()
+
+    # Add trace for actual job postings
+    fig.add_trace(go.Scatter(
+        x=filtered_df['Month'],
+        y=filtered_df['Unique Postings'],
+        mode='lines+markers',
+        name='Actual Job Postings',
+        text=filtered_df['Unique Postings'],
+        hovertemplate='<b>%{x}</b><br>Unique Postings: %{text}<extra></extra>',
+    ))
+
+    # Add trace for forecasted values
+    fig.add_trace(go.Scatter(
+        x=forecast_index,
+        y=forecast_values,
+        mode='lines+markers',
+        name='Forecast',
+        line=dict(dash='dash', color='red'),
+        text=forecast_values,
+        hovertemplate='<b>%{x}</b><br>Forecasted Postings: %{text}<extra></extra>',
+    ))
+
+    fig.update_layout(
+        title="Job Postings with SARIMA Forecast",
+        xaxis_title="Month",
+        yaxis_title="Unique Postings",
+        hovermode="closest",
+        template="plotly_dark"
+    )
+
+    st.plotly_chart(fig)
 
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
