@@ -38,7 +38,7 @@ states = df['State Name'].unique()
 states = [state for state in states if pd.notnull(state)]
 
 # Sort and display the states in the sidebar with enhanced visibility
-selected_state = st.sidebar.selectbox("Select a State", sorted(states), key="state_select")
+selected_state = st.sidebar.selectbox("Select a State", sorted(states), key="state_select", label_visibility="hidden")
 
 # Filter by selected state
 filtered_df = df[df['State Name'] == selected_state]
@@ -122,19 +122,20 @@ st.write("Hover over a marker for more details.")
 map_html = map_obj._repr_html_()  # Get the HTML representation of the map
 components.html(map_html, height=600)  # Display the map in Streamlit
 ###
-st.markdown("""
-    <footer>
-        <p style="font-size:14px; color:gray;">
-            Some locations cannot be located by this service. <a href="#show-notifications" id="show-notifications">Click here to see the details.</a>
-        </p>
-    </footer>
-""", unsafe_allow_html=True)
+# st.markdown("""
+#     <footer>
+#         <p style="font-size:14px; color:gray;">
+#             Some locations cannot be located by this service. <a href="#show-notifications" id="show-notifications">Click here to see the details.</a>
+#         </p>
+#     </footer>
+# """, unsafe_allow_html=True)
 
-# Show notifications if any location could not be geocoded
+# Show notifications only when clicked
 if missing_locations:
-    st.write("### Locations not found:")
-    for location in missing_locations:
-        st.write(f"Location not found for: {location}")
+    with st.expander("Click here to see the details"):
+        st.write("### Locations not found:")
+        for location in missing_locations:
+            st.write(f"Location not found for: {location}")
 
 ###
 # Create a selectbox for counties in the selected state
