@@ -141,7 +141,7 @@ HeatMap(heat_data).add_to(map_obj)
 # Render the folium map in Streamlit
 st.title("Job Postings Location Heatmap")
 st.subheader("Heatmap showing counties with job posting information")
-st.write("Hover over a marker for more details.")
+st.write("Zoom the map to find the location. Hover over a marker for more details.")
 # Render the folium map using Streamlit components
 map_html = map_obj._repr_html_()  # Get the HTML representation of the map
 components.html(map_html, height=600)  # Display the map in Streamlit
