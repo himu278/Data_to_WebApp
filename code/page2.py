@@ -133,21 +133,20 @@ components.html(map_html, height=600)  # Display the map in Streamlit
 #     </footer>
 # """, unsafe_allow_html=True)
 
-st.markdown("""
+if missing_locations:
+    missing_text = "<br>".join([f"• {location}" for location in missing_locations])
+else:
+    missing_text = ""
+
+st.markdown(f"""
     <footer>
         <p style="font-size:14px; color:gray;">
             Some locations cannot be located by this service.
+            {missing_text}
         </p>
     </footer>
 """, unsafe_allow_html=True)
 
-###
-# Show notifications only when clicked
-if missing_locations:
-    with st.expander("Details for Missing Locations"):
-        st.write("### Locations not found:")
-        for location in missing_locations:
-            st.write(f"Location not found for: {location}")
 
 ###
 
