@@ -43,7 +43,7 @@ st.markdown("""
     Use the interactive maps and charts to gain deeper insights into the evolving STEM job landscape. 
     You can select a state to view county-level data, access detailed job posting statistics, and explore the latest trends in job demands and salary offerings.
 
-    **Navigate the app** using the sidebar to:
+    **Navigate** using the sidebar to:
     - Select a state for a detailed view.
     - View geographical heatmaps that highlight job posting intensity.
     - Compare salary data across counties.
@@ -186,6 +186,19 @@ st.subheader(f"Details for {selected_county}")
 st.metric("Median Salary", f"${county_data['Median Annual Advertised Salary'].values[0]:,.0f}")
 st.metric("Unique Postings", f"{county_data['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
 st.metric("Posting Duration", f"{county_data['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
+
+###
+# Add a clear separation between the map and the chart sections
+st.markdown("---")  # This adds a horizontal line divider
+
+# Add a section header indicating the completion of the map section
+st.markdown("""
+    ## Job Posting Statistics
+    Now, let's dive into the job posting statistics for the selected state. 
+    Below you will find visualizations that provide insights into the **median annual advertised salaries**, **unique job postings**, and **posting durations** across counties.
+    Explore the charts to analyze trends and make data-driven decisions for your next career or business strategy.
+""")
+###
 
 ###
 # Add visual chart for Median Salary, Median Posting Duration, and Unique Postings
