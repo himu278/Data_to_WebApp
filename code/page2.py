@@ -29,7 +29,31 @@ df = df.dropna(subset=['Median Annual Advertised Salary'])
 
 # Set up Streamlit app - Make sure this is at the very top of your script
 st.set_page_config(layout="wide")
-st.title("Job Postings Dashboard (STEM Occupations)")
+###
+st.title("Welcome to the **STEM Job Postings dashboard**, a comprehensive platform for exploring job posting data across the United States.")
+
+st.markdown("""
+    This tool offers valuable insights into the **demand for STEM occupations** by displaying job postings, salary information, and posting durations across counties and states.
+
+    Whether you're an industry professional, a job seeker, or a researcher, this tool enables you to:
+    - Explore job postings by **county** and **state**.
+    - Visualize **median salaries**, **posting durations**, and **job posting volumes**.
+    - Analyze trends in STEM job markets across different geographic regions.
+    
+    Use the interactive maps and charts to gain deeper insights into the evolving STEM job landscape. 
+    You can select a state to view county-level data, access detailed job posting statistics, and explore the latest trends in job demands and salary offerings.
+
+    **Navigate the app** using the sidebar to:
+    - Select a state for a detailed view.
+    - View geographical heatmaps that highlight job posting intensity.
+    - Compare salary data across counties.
+    - Track the median posting durations and posting volumes for STEM-related jobs.
+
+    Start exploring now and gain valuable insights into the **STEM employment trends** that can guide your next career decision, research, or business strategy.
+
+    If you have any questions or need further assistance, feel free to explore the additional information at the bottom of the page.
+""")
+###
 
 # Sidebar Filters
 states = df['State Name'].unique()
@@ -165,88 +189,75 @@ st.metric("Posting Duration", f"{county_data['Median Posting Duration from Jan 2
 
 ###
 # Add visual chart for Median Salary, Median Posting Duration, and Unique Postings
-# First Plot - Median Salary
-chart_1 = (
-    alt.Chart(filtered_df)
-    .mark_bar()
-    .encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
-        y=alt.Y('Median Annual Advertised Salary:Q', title='Median Annual Advertised Salary'),
-        color=alt.value('#4682B4')
-    )
-    .properties(
-        title='Median Annual Advertised Salary by County (2023)',
-        width=800,  # Increase chart width
-        height=400  # Increase chart height for better spacing
-    )
-    .configure_axis(
-        labelFontSize=10,  # Reduce label font size for readability
-        titleFontSize=12
-    )
-    .configure_title(
-        fontSize=14,  # Set title font size
-        anchor='middle',  # Center the title
-        font='Helvetica'
-    )
-    .interactive()
+# Add description before the first chart - Median Salary
+st.markdown("""
+    ### Median Annual Advertised Salary by County (2023)
+    This chart displays the **Median Annual Advertised Salary** for STEM-related job postings across different counties in the selected state. 
+    The height of each bar represents the median salary for job postings in each county, helping you to identify the regions with the highest and lowest salaries for STEM occupations.
+    Use this chart to compare salary offerings across counties and find areas with the best-paying job opportunities in the STEM field.
+""")
+
+chart_1 = alt.Chart(filtered_df).mark_bar().encode(
+    x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),
+    y=alt.Y('Median Annual Advertised Salary:Q', title='Median Annual Advertised Salary'),
+    color=alt.value('#4682B4')
+).properties(
+    width=800, height=400
+).configure_axis(
+    labelFontSize=10, titleFontSize=12
+).configure_title(
+    fontSize=14, anchor='middle'
 )
 
-# Second Plot - Unique Postings
-chart_2 = (
-    alt.Chart(filtered_df)
-    .mark_bar()
-    .encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
-        y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
-        color=alt.value('#E97451')
-    )
-    .properties(
-        title='Unique Job Postings by County (2023)',
-        width=800,
-        height=400
-    )
-    .configure_axis(
-        labelFontSize=10,  # Reduce label font size for readability
-        titleFontSize=12
-    )
-    .configure_title(
-        fontSize=14,
-        anchor='middle',
-        font='Helvetica'
-    )
-    .interactive()
-)
-
-# Third Plot - Median Posting Duration
-chart_3 = (
-    alt.Chart(filtered_df)
-    .mark_bar()
-    .encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
-        y=alt.Y('Median Posting Duration from Jan 2023 - Dec 2023:Q', title='Median Posting Duration (2023)'),
-        color=alt.value('#2ecc71')
-    )
-    .properties(
-        title='Median Posting Duration by County (2023)',
-        width=800,
-        height=400
-    )
-    .configure_axis(
-        labelFontSize=10,  # Reduce label font size for readability
-        titleFontSize=12
-    )
-    .configure_title(
-        fontSize=14,
-        anchor='middle',
-        font='Helvetica'
-    )
-    .interactive()
-)
-
-# Display charts
+# Display the first chart
 st.altair_chart(chart_1, use_container_width=True)
+
+# Add description before the second chart - Unique Postings
+st.markdown("""
+    ### Unique Job Postings by County (2023)
+    This chart visualizes the **Unique Job Postings** for STEM occupations in each county. It shows the number of unique job postings from January to December 2023. 
+    This data can help identify areas with a high volume of job opportunities, providing insights into the demand for STEM professionals in different regions.
+    Use this chart to determine which counties have the greatest number of unique job postings in STEM fields.
+""")
+
+chart_2 = alt.Chart(filtered_df).mark_bar().encode(
+    x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),
+    y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
+    color=alt.value('#E97451')
+).properties(
+    width=800, height=400
+).configure_axis(
+    labelFontSize=10, titleFontSize=12
+).configure_title(
+    fontSize=14, anchor='middle'
+)
+
+# Display the second chart
 st.altair_chart(chart_2, use_container_width=True)
+
+# Add description before the third chart - Median Posting Duration
+st.markdown("""
+    ### Median Posting Duration by County (2023)
+    This chart shows the **Median Posting Duration** for STEM-related job postings in each county from January to December 2023. The median posting duration indicates how long a job posting stays open before being filled. 
+    A shorter duration suggests higher demand or faster hiring cycles, while a longer duration may indicate lower demand or a more selective hiring process. 
+    Use this chart to identify which counties have the fastest job posting turnovers and to understand the hiring dynamics in STEM occupations.
+""")
+
+chart_3 = alt.Chart(filtered_df).mark_bar().encode(
+    x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),
+    y=alt.Y('Median Posting Duration from Jan 2023 - Dec 2023:Q', title='Median Posting Duration (2023)'),
+    color=alt.value('#2ecc71')
+).properties(
+    width=800, height=400
+).configure_axis(
+    labelFontSize=10, titleFontSize=12
+).configure_title(
+    fontSize=14, anchor='middle'
+)
+
+# Display the third chart
 st.altair_chart(chart_3, use_container_width=True)
+
 
 # Add some additional customization for clarity
 st.markdown(""" 
