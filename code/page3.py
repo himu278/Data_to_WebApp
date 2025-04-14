@@ -22,18 +22,40 @@ st.markdown("""
     <style>
         .header {
             text-align: center;
-            padding: 50px;
-            background-color: #007bff;
+            padding: 60px;
+            background-color: #2c3e50;
             color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
         }
         .header h1 {
             font-size: 48px;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
         }
         .header p {
             font-size: 18px;
             margin-top: 10px;
+            font-weight: 400;
+        }
+        .section-header {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 30px;
+            color: #34495e;
+        }
+        .description {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .stSlider {
+            margin-top: 20px;
+        }
+        .stSelectbox, .stDateInput, .stCheckbox {
+            margin-bottom: 20px;
         }
     </style>
     <div class="header">
