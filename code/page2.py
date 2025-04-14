@@ -61,16 +61,21 @@ st.metric(
 geolocator = Nominatim(user_agent="my_job_postings_app")
 
 # Function to get latitude and longitude with error handling
+# Track counties that can't be geocoded
+missing_locations = []
+
 def geocode_county(county):
     try:
         location = geolocator.geocode(county)
         if location:
             return location.latitude, location.longitude
         else:
-            # Instead of showing a warning, just return None, None
+            # Track missing counties
+            missing_locations.append(county)
             return None, None
     except Exception as e:
-        # Instead of showing an error message, return None, None silently
+        # Track counties that failed
+        missing_locations.append(county)
         return None, None
 
 # Clean the county names
@@ -119,11 +124,17 @@ components.html(map_html, height=600)  # Display the map in Streamlit
 ###
 st.markdown("""
     <footer>
-        <p style="font-size:14px; color:gray;">Some locations cannot be located by this service.</p>
+        <p style="font-size:14px; color:gray;">
+            Some locations cannot be located by this service. <a href="#show-notifications" id="show-notifications">Click here to see the details.</a>
+        </p>
     </footer>
 """, unsafe_allow_html=True)
-###
 
+# Show notifications if any location could not be geocoded
+if missing_locations:
+    st.write("### Locations not found:")
+    for location in missing_locations:
+        st.write(f"Location not found for: {location}")
 
 ###
 # Create a selectbox for counties in the selected state
