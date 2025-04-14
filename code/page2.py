@@ -210,18 +210,31 @@ st.markdown("""
     Use this chart to compare salary offerings across counties and find areas with the best-paying job opportunities in the STEM field.
 """)
 
-chart_1 = alt.Chart(filtered_df).mark_bar().encode(
-    x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),
-    y=alt.Y('Median Annual Advertised Salary:Q', title='Median Annual Advertised Salary'),
-    color=alt.value('#4682B4')
-).properties(
-    width=800, height=400
-).configure_axis(
-    labelFontSize=10, titleFontSize=12
-).configure_title(
-    fontSize=14, anchor='middle'
+# First Plot - Median Salary
+chart_1 = (
+    alt.Chart(filtered_df)
+    .mark_bar()
+    .encode(
+        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
+        y=alt.Y('Median Annual Advertised Salary:Q', title='Median Annual Advertised Salary'),
+        color=alt.value('#4682B4')
+    )
+    .properties(
+        title='Median Annual Advertised Salary by County (2023)',
+        width=800,  # Increase chart width
+        height=400  # Increase chart height for better spacing
+    )
+    .configure_axis(
+        labelFontSize=10,  # Reduce label font size for readability
+        titleFontSize=12
+    )
+    .configure_title(
+        fontSize=14,  # Set title font size
+        anchor='middle',  # Center the title
+        font='Helvetica'
+    )
+    .interactive()
 )
-
 # Display the first chart
 st.altair_chart(chart_1, use_container_width=True)
 
@@ -233,16 +246,30 @@ st.markdown("""
     Use this chart to determine which counties have the greatest number of unique job postings in STEM fields.
 """)
 
-chart_2 = alt.Chart(filtered_df).mark_bar().encode(
-    x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),
-    y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
-    color=alt.value('#E97451')
-).properties(
-    width=800, height=400
-).configure_axis(
-    labelFontSize=10, titleFontSize=12
-).configure_title(
-    fontSize=14, anchor='middle'
+# Second Plot - Unique Postings
+chart_2 = (
+    alt.Chart(filtered_df)
+    .mark_bar()
+    .encode(
+        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
+        y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
+        color=alt.value('#E97451')
+    )
+    .properties(
+        title='Unique Job Postings by County (2023)',
+        width=800,
+        height=400
+    )
+    .configure_axis(
+        labelFontSize=10,  # Reduce label font size for readability
+        titleFontSize=12
+    )
+    .configure_title(
+        fontSize=14,
+        anchor='middle',
+        font='Helvetica'
+    )
+    .interactive()
 )
 
 # Display the second chart
@@ -256,16 +283,30 @@ st.markdown("""
     Use this chart to identify which counties have the fastest job posting turnovers and to understand the hiring dynamics in STEM occupations.
 """)
 
-chart_3 = alt.Chart(filtered_df).mark_bar().encode(
-    x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),
-    y=alt.Y('Median Posting Duration from Jan 2023 - Dec 2023:Q', title='Median Posting Duration (2023)'),
-    color=alt.value('#2ecc71')
-).properties(
-    width=800, height=400
-).configure_axis(
-    labelFontSize=10, titleFontSize=12
-).configure_title(
-    fontSize=14, anchor='middle'
+# Third Plot - Median Posting Duration
+chart_3 = (
+    alt.Chart(filtered_df)
+    .mark_bar()
+    .encode(
+        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
+        y=alt.Y('Median Posting Duration from Jan 2023 - Dec 2023:Q', title='Median Posting Duration (2023)'),
+        color=alt.value('#2ecc71')
+    )
+    .properties(
+        title='Median Posting Duration by County (2023)',
+        width=800,
+        height=400
+    )
+    .configure_axis(
+        labelFontSize=10,  # Reduce label font size for readability
+        titleFontSize=12
+    )
+    .configure_title(
+        fontSize=14,
+        anchor='middle',
+        font='Helvetica'
+    )
+    .interactive()
 )
 
 # Display the third chart
