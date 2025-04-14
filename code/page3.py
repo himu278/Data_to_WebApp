@@ -19,14 +19,15 @@ df = load_data()
 
 # Streamlit App Layout
 st.title("Job Postings Time Series Dashboard")
-st.write("Visualize monthly job posting trends by time.")
+st.write("Visualize monthly job posting trends by time. Explore historical job posting data and forecast future trends.")
 
 # Date Range Picker
+st.write("### Step 1: Filter the Data by Date Range")
 min_date = df["Month"].min().date()
 max_date = df["Month"].max().date()
 
 start_date, end_date = st.date_input(
-    "Select date range:",
+    "Select the date range for your analysis:",
     value=(min_date, max_date),
     min_value=min_date,
     max_value=max_date
@@ -40,11 +41,13 @@ end_date = pd.to_datetime(end_date)
 filtered_df = df[(df["Month"] >= start_date) & (df["Month"] <= end_date)]
 
 # Display raw data option
-if st.checkbox("Show Raw Data"):
+if st.checkbox("Show Raw Data (within selected date range)"):
+    st.write("The raw data will be displayed below. You can explore individual job postings for each month.")
     st.dataframe(filtered_df)
 
-# Plot the raw data using Plotly
+# Plot the raw data
 st.subheader("Raw Time Series of Unique Job Postings")
+st.write("This plot shows the raw trend of unique job postings over time within the selected date range. You can interact with the plot by zooming in, hovering for more details, and toggling between data points.")
 fig = go.Figure()
 
 # Add trace for the actual job postings
@@ -72,6 +75,8 @@ filtered_df['log_postings'] = np.log(filtered_df['Unique Postings'])
 
 # Interactive SARIMA Parameters
 st.sidebar.subheader("SARIMA Model Parameters")
+st.sidebar.write("Use these sliders to adjust the SARIMA model parameters. Experiment with different values for AR, MA, and Seasonal components to optimize the forecast.")
+
 p = st.sidebar.slider('AR (p)', 0, 5, 1)
 d = st.sidebar.slider('I (d)', 0, 2, 1)
 q = st.sidebar.slider('MA (q)', 0, 5, 1)
@@ -111,8 +116,10 @@ for p in range(0, 3):  # Trying AR values from 0 to 2
                         continue
 
 # Output the best SARIMA parameters
-st.write(f"Best SARIMA parameters: AR, I, MA = {best_order}, Seasonal AR, I, MA = {best_seasonal_order}")
-st.write(f"Best AIC: {best_aic}")
+st.write(f"### Best SARIMA Parameters Found:")
+st.write(f"- AR, I, MA = {best_order}")
+st.write(f"- Seasonal AR, I, MA = {best_seasonal_order}")
+st.write(f"- AIC: {best_aic}")
 
 # Forecasting period - Allow the user to select the number of months to forecast
 forecast_steps = st.slider('Forecast Steps (Months)', 1, 24, 12)
