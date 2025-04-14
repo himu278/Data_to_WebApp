@@ -123,15 +123,24 @@ map_html = map_obj._repr_html_()  # Get the HTML representation of the map
 components.html(map_html, height=600)  # Display the map in Streamlit
 
 ###
-# Footer with a clickable "?" for showing details
+# Footer 
+# st.markdown("""
+#     <footer>
+#         <p style="font-size:14px; color:gray;">
+#             Some locations cannot be located by this service. 
+#             <a href="#show-notifications" id="show-notifications" style="font-size:20px; font-weight:bold; color:blue; text-decoration:none;">?</a>
+#         </p>
+#     </footer>
+# """, unsafe_allow_html=True)
+
 st.markdown("""
     <footer>
         <p style="font-size:14px; color:gray;">
-            Some locations cannot be located by this service. 
-            <a href="#show-notifications" id="show-notifications" style="font-size:20px; font-weight:bold; color:blue; text-decoration:none;">?</a>
+            Some locations cannot be located by this service.
         </p>
     </footer>
 """, unsafe_allow_html=True)
+
 ###
 # Show notifications only when clicked
 if missing_locations:
