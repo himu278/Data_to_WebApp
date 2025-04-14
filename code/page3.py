@@ -293,7 +293,6 @@ with st.expander("Understanding the Results 📝"):
     - Look for any **seasonal trends**—for example, job postings might increase in certain months of the year, which the model should capture.
     """)
 
-
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
     st.dataframe(filtered_df[["Month", "Posting Intensity"]].reset_index(drop=True))
