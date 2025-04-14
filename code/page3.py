@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-from prophet import Prophet
+import matplotlib.pyplot as plt
+import numpy as np
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 # Load the data
 @st.cache_data
@@ -38,37 +39,47 @@ end_date = pd.to_datetime(end_date)
 # Filtered data
 filtered_df = df[(df["Month"] >= start_date) & (df["Month"] <= end_date)]
 
-# Prophet Forecasting Model
-forecast_periods = 12  # Number of months to forecast into the future
-prophet_df = filtered_df[["Month", "Unique Postings"]].rename(columns={"Month": "ds", "Unique Postings": "y"})
+# Plot the raw data to analyze the trend visually
+st.subheader("Raw Time Series of Unique Job Postings")
+plt.figure(figsize=(10, 6))
+plt.plot(filtered_df["Month"], filtered_df["Unique Postings"])
+plt.title("Unique Job Postings Over Time")
+plt.xlabel("Month")
+plt.ylabel("Unique Postings")
+plt.grid(True)
+st.pyplot(plt)
 
-# Initialize and fit the model
-model = Prophet(yearly_seasonality=True, weekly_seasonality=False, daily_seasonality=False)
-model.fit(prophet_df)
+# Preprocessing: Take log of the data for stabilization (this can help with trends)
+filtered_df['log_postings'] = np.log(filtered_df['Unique Postings'])
 
-# Manually create the future dates
-last_date = prophet_df["ds"].max()
-future_dates = pd.date_range(start=last_date, periods=forecast_periods + 1, freq='M')[1:]
+# SARIMA Model: Fit a SARIMAX model
+sarima_model = SARIMAX(filtered_df['log_postings'], 
+                       order=(1, 1, 1),  # AR, I, MA terms
+                       seasonal_order=(1, 1, 1, 12),  # Seasonal components (12 months)
+                       enforce_stationarity=False, 
+                       enforce_invertibility=False)
 
-# Create a new dataframe with the future dates
-future_df = pd.DataFrame({'ds': future_dates})
+results = sarima_model.fit()
 
-# Forecast the future
-forecast = model.predict(future_df)
+# Forecast the next 12 months
+forecast_steps = 12
+forecast = results.get_forecast(steps=forecast_steps)
+forecast_index = pd.date_range(start=filtered_df['Month'].iloc[-1], periods=forecast_steps+1, freq='M')[1:]
 
-# Add forecast values to the dataframe
-forecasted_df = pd.concat([prophet_df, future_df], ignore_index=True)
-forecasted_df["forecast"] = model.predict(forecasted_df)["yhat"]
+# Convert the forecasted values back from log scale to original scale
+forecast_values = np.exp(forecast.predicted_mean)
 
-# Interactive Plotly Time Series Plot with Forecast
-st.subheader("Unique Job Postings Over Time with Forecast")
-fig = px.line(filtered_df, x="Month", y="Unique Postings", title="Time Series of Unique Job Postings with Forecast", markers=True)
-
-# Plot the forecast only for the forecast period
-fig.add_scatter(x=forecasted_df["ds"], y=forecasted_df["forecast"], mode="lines", name="Forecast", line=dict(dash='dot', color='red'))
-
-fig.update_layout(xaxis_title="Month", yaxis_title="Unique Postings", template="plotly_dark")
-st.plotly_chart(fig)
+# Plot the forecast alongside the historical data
+st.subheader("SARIMA Forecast for Unique Job Postings")
+plt.figure(figsize=(10, 6))
+plt.plot(filtered_df["Month"], filtered_df["Unique Postings"], label="Actual")
+plt.plot(forecast_index, forecast_values, label="Forecast", linestyle='dashed', color='red')
+plt.title("Job Postings with SARIMA Forecast")
+plt.xlabel("Month")
+plt.ylabel("Unique Postings")
+plt.legend()
+plt.grid(True)
+st.pyplot(plt)
 
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
