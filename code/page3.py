@@ -68,20 +68,43 @@ seasonal_d = st.sidebar.slider('Seasonal I (D)', 0, 1, 1)
 seasonal_q = st.sidebar.slider('Seasonal MA (Q)', 0, 3, 1)
 seasonal_periods = st.sidebar.slider('Seasonality Period (s)', 1, 12, 12)  # Typically 12 for monthly data
 
-# SARIMA Model: Fit a SARIMAX model with interactive parameters
-sarima_model = SARIMAX(filtered_df['log_postings'], 
-                       order=(p, d, q),  # AR, I, MA terms
-                       seasonal_order=(seasonal_p, seasonal_d, seasonal_q, seasonal_periods),  # Seasonal components
-                       enforce_stationarity=False, 
-                       enforce_invertibility=False)
+# Perform Grid Search over different SARIMA configurations
+best_aic = float('inf')
+best_order = None
+best_seasonal_order = None
+best_model = None
 
-results = sarima_model.fit()
+# Try different combinations of AR, I, MA, and seasonal parameters
+for p in range(0, 3):  # Trying AR values from 0 to 2
+    for d in range(0, 2):  # Trying I values from 0 to 1
+        for q in range(0, 3):  # Trying MA values from 0 to 2
+            for seasonal_p in range(0, 2):  # Seasonal AR values
+                for seasonal_q in range(0, 2):  # Seasonal MA values
+                    try:
+                        sarima_model = SARIMAX(filtered_df['log_postings'], 
+                                               order=(p, d, q),  # AR, I, MA terms
+                                               seasonal_order=(seasonal_p, seasonal_d, seasonal_q, seasonal_periods),  # Seasonal components
+                                               enforce_stationarity=False, 
+                                               enforce_invertibility=False)
+
+                        results = sarima_model.fit(disp=False)
+                        if results.aic < best_aic:
+                            best_aic = results.aic
+                            best_order = (p, d, q)
+                            best_seasonal_order = (seasonal_p, seasonal_d, seasonal_q, seasonal_periods)
+                            best_model = results
+                    except:
+                        continue
+
+# Output the best SARIMA parameters
+st.write(f"Best SARIMA parameters: AR, I, MA = {best_order}, Seasonal AR, I, MA = {best_seasonal_order}")
+st.write(f"Best AIC: {best_aic}")
 
 # Forecasting period - Allow the user to select the number of months to forecast
 forecast_steps = st.slider('Forecast Steps (Months)', 1, 24, 12)
 
 # Forecast the next 'forecast_steps' months
-forecast = results.get_forecast(steps=forecast_steps)
+forecast = best_model.get_forecast(steps=forecast_steps)
 forecast_index = pd.date_range(start=filtered_df['Month'].iloc[-1], periods=forecast_steps+1, freq='M')[1:]
 
 # Convert forecasted values from log scale back to original scale
