@@ -19,10 +19,14 @@ df = load_data()
 
 # Streamlit App Layout
 st.title("Job Postings Time Series Dashboard")
-st.write("Visualize monthly job posting trends by time. Explore historical job posting data and forecast future trends.")
+st.write("""
+    This app allows you to visualize job posting trends over time and forecast future job postings using a SARIMA model.
+    You can filter the data based on a custom date range, adjust model parameters, and see forecasts for job postings.
+""")
 
 # Date Range Picker
 st.write("### Step 1: Filter the Data by Date Range")
+st.write("Select the start and end dates for the data you'd like to analyze.")
 min_date = df["Month"].min().date()
 max_date = df["Month"].max().date()
 
@@ -41,13 +45,12 @@ end_date = pd.to_datetime(end_date)
 filtered_df = df[(df["Month"] >= start_date) & (df["Month"] <= end_date)]
 
 # Display raw data option
-if st.checkbox("Show Raw Data (within selected date range)"):
-    st.write("The raw data will be displayed below. You can explore individual job postings for each month.")
+if st.checkbox("Show Raw Data (within selected date range)", help="Check this box to view the data table for the selected period."):
     st.dataframe(filtered_df)
 
 # Plot the raw data
 st.subheader("Raw Time Series of Unique Job Postings")
-st.write("This plot shows the raw trend of unique job postings over time within the selected date range. You can interact with the plot by zooming in, hovering for more details, and toggling between data points.")
+st.write("This plot shows the raw job postings trend over time, based on the selected date range.")
 fig = go.Figure()
 
 # Add trace for the actual job postings
@@ -75,17 +78,17 @@ filtered_df['log_postings'] = np.log(filtered_df['Unique Postings'])
 
 # Interactive SARIMA Parameters
 st.sidebar.subheader("SARIMA Model Parameters")
-st.sidebar.write("Use these sliders to adjust the SARIMA model parameters. Experiment with different values for AR, MA, and Seasonal components to optimize the forecast.")
+st.sidebar.write("Use these sliders to adjust the SARIMA model parameters. Experiment with different values to observe the effect on the forecast.")
 
-p = st.sidebar.slider('AR (p)', 0, 5, 1)
-d = st.sidebar.slider('I (d)', 0, 2, 1)
-q = st.sidebar.slider('MA (q)', 0, 5, 1)
+p = st.sidebar.slider('AR (p)', 0, 5, 1, help="The AR parameter controls the autoregressive part of the model.")
+d = st.sidebar.slider('I (d)', 0, 2, 1, help="The I parameter controls the differencing of the data to make it stationary.")
+q = st.sidebar.slider('MA (q)', 0, 5, 1, help="The MA parameter controls the moving average part of the model.")
 
 # Seasonal components
-seasonal_p = st.sidebar.slider('Seasonal AR (P)', 0, 3, 1)
-seasonal_d = st.sidebar.slider('Seasonal I (D)', 0, 1, 1)
-seasonal_q = st.sidebar.slider('Seasonal MA (Q)', 0, 3, 1)
-seasonal_periods = st.sidebar.slider('Seasonality Period (s)', 1, 12, 12)  # Typically 12 for monthly data
+seasonal_p = st.sidebar.slider('Seasonal AR (P)', 0, 3, 1, help="The seasonal AR parameter controls the seasonal autoregressive part.")
+seasonal_d = st.sidebar.slider('Seasonal I (D)', 0, 1, 1, help="The seasonal I parameter controls seasonal differencing.")
+seasonal_q = st.sidebar.slider('Seasonal MA (Q)', 0, 3, 1, help="The seasonal MA parameter controls the seasonal moving average.")
+seasonal_periods = st.sidebar.slider('Seasonality Period (s)', 1, 12, 12, help="The period (months) for seasonality. Typically 12 for monthly data.")
 
 # Perform Grid Search over different SARIMA configurations
 best_aic = float('inf')
@@ -119,10 +122,10 @@ for p in range(0, 3):  # Trying AR values from 0 to 2
 st.write(f"### Best SARIMA Parameters Found:")
 st.write(f"- AR, I, MA = {best_order}")
 st.write(f"- Seasonal AR, I, MA = {best_seasonal_order}")
-st.write(f"- AIC: {best_aic}")
+st.write(f"- Best AIC: {best_aic}")
 
 # Forecasting period - Allow the user to select the number of months to forecast
-forecast_steps = st.slider('Forecast Steps (Months)', 1, 24, 12)
+forecast_steps = st.slider('Forecast Steps (Months)', 1, 24, 12, help="Select how many months into the future you want the forecast.")
 
 # Forecast the next 'forecast_steps' months
 forecast = best_model.get_forecast(steps=forecast_steps)
@@ -133,8 +136,8 @@ forecast_values = np.exp(forecast.predicted_mean)
 
 # Plot the forecast alongside the historical data using Plotly
 st.subheader(f"SARIMA Forecast for Unique Job Postings (Next {forecast_steps} months)")
+show_forecast = st.checkbox("Show Forecast Plot", value=True, help="Toggle to display or hide the forecast plot.")
 
-show_forecast = st.checkbox("Show Forecast Plot", value=True)  # Allow user to toggle forecast visibility
 if show_forecast:
     fig = go.Figure()
 
@@ -168,6 +171,14 @@ if show_forecast:
     )
 
     st.plotly_chart(fig)
+
+# Option to download the forecast data
+if st.button("Download Forecast Data as CSV"):
+    forecast_df = pd.DataFrame({
+        'Date': forecast_index,
+        'Forecasted Unique Postings': forecast_values
+    })
+    st.download_button(label="Download CSV", data=forecast_df.to_csv(index=False), file_name="forecasted_job_postings.csv", mime="text/csv")
 
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
