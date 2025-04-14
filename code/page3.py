@@ -8,14 +8,14 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 @st.cache_data
 def load_data():
     file_path = "D:/Project/Data_to_WebApp/data/Job_Posting_Analytics_8_Occupations_in_3194_Counties_5318.xls"
-    df = pd.read_excel(file_path, sheet_name="Job Postings Timeseries", engine='xlrd', skiprows=2)
-    df = df.dropna(subset=["Month"])
-    df["Month"] = pd.to_datetime(df["Month"], format="%b %Y")
-    df["Unique Postings"] = pd.to_numeric(df["Unique Postings"], errors="coerce")
-    df = df.sort_values("Month").reset_index(drop=True)
-    return df
+    df_jpt = pd.read_excel(file_path, sheet_name="Job Postings Timeseries", engine='xlrd', skiprows=2)
+    df_jpt = df_jpt.dropna(subset=["Month"])
+    df_jpt["Month"] = pd.to_datetime(df_jpt["Month"], format="%b %Y")
+    df_jpt["Unique Postings"] = pd.to_numeric(df_jpt["Unique Postings"], errors="coerce")
+    df_jpt = df_jpt.sort_values("Month").reset_index(drop=True)
+    return df_jpt
 
-df = load_data()
+df_jpt = load_data()
 
 # Professional Header using HTML and CSS
 st.markdown("""
@@ -103,8 +103,8 @@ st.write("""
 # Date Range Picker
 st.write("### Filter the Data by Date Range")
 st.write("Select the start and end dates for the data you'd like to analyze.")
-min_date = df["Month"].min().date()
-max_date = df["Month"].max().date()
+min_date = df_jpt["Month"].min().date()
+max_date = df_jpt["Month"].max().date()
 
 start_date, end_date = st.date_input(
     "Select the date range for your analysis:",
@@ -118,11 +118,11 @@ start_date = pd.to_datetime(start_date)
 end_date = pd.to_datetime(end_date)
 
 # Filter data based on selected date range
-filtered_df = df[(df["Month"] >= start_date) & (df["Month"] <= end_date)]
+filtered_df_jpt = df_jpt[(df_jpt["Month"] >= start_date) & (df_jpt["Month"] <= end_date)]
 
 # Display raw data option
 if st.checkbox("Show Raw Data (within selected date range)", help="Check this box to view the data table for the selected period."):
-    st.dataframe(filtered_df)
+    st.dataframe(filtered_df_jpt)
 
 # Plot the raw data
 st.subheader("Raw Time Series of Unique Job Postings")
@@ -131,11 +131,11 @@ fig = go.Figure()
 
 # Add trace for the actual job postings
 fig.add_trace(go.Scatter(
-    x=filtered_df['Month'],
-    y=filtered_df['Unique Postings'],
+    x=filtered_df_jpt['Month'],
+    y=filtered_df_jpt['Unique Postings'],
     mode='lines+markers',
     name='Actual Job Postings',
-    text=filtered_df['Unique Postings'],  # Tooltip with unique postings value
+    text=filtered_df_jpt['Unique Postings'],  # Tooltip with unique postings value
     hovertemplate='<b>%{x}</b><br>Unique Postings: %{text}<extra></extra>',  # Hover info
 ))
 
@@ -150,7 +150,7 @@ fig.update_layout(
 st.plotly_chart(fig)
 
 # Preprocessing: Take log of the data for stabilization
-filtered_df['log_postings'] = np.log(filtered_df['Unique Postings'])
+filtered_df_jpt['log_postings'] = np.log(filtered_df_jpt['Unique Postings'])
 
 # Interactive SARIMA Parameters
 st.sidebar.subheader("SARIMA Model Parameters")
@@ -179,7 +179,7 @@ for p in range(0, 3):  # Trying AR values from 0 to 2
             for seasonal_p in range(0, 2):  # Seasonal AR values
                 for seasonal_q in range(0, 2):  # Seasonal MA values
                     try:
-                        sarima_model = SARIMAX(filtered_df['log_postings'], 
+                        sarima_model = SARIMAX(filtered_df_jpt['log_postings'], 
                                                order=(p, d, q),  # AR, I, MA terms
                                                seasonal_order=(seasonal_p, seasonal_d, seasonal_q, seasonal_periods),  # Seasonal components
                                                enforce_stationarity=False, 
@@ -205,7 +205,7 @@ forecast_steps = st.slider('Forecast Steps (Months)', 1, 24, 12, help="Select ho
 
 # Forecast the next 'forecast_steps' months
 forecast = best_model.get_forecast(steps=forecast_steps)
-forecast_index = pd.date_range(start=filtered_df['Month'].iloc[-1], periods=forecast_steps+1, freq='M')[1:]
+forecast_index = pd.date_range(start=filtered_df_jpt['Month'].iloc[-1], periods=forecast_steps+1, freq='M')[1:]
 
 # Convert forecasted values from log scale back to original scale
 forecast_values = np.exp(forecast.predicted_mean)
@@ -219,11 +219,11 @@ if show_forecast:
 
     # Add trace for actual job postings
     fig.add_trace(go.Scatter(
-        x=filtered_df['Month'],
-        y=filtered_df['Unique Postings'],
+        x=filtered_df_jpt['Month'],
+        y=filtered_df_jpt['Unique Postings'],
         mode='lines+markers',
         name='Actual Job Postings',
-        text=filtered_df['Unique Postings'],
+        text=filtered_df_jpt['Unique Postings'],
         hovertemplate='<b>%{x}</b><br>Unique Postings: %{text}<extra></extra>',
     ))
 
@@ -250,11 +250,11 @@ if show_forecast:
 
 # Option to download the forecast data
 if st.button("Download Forecast Data as CSV"):
-    forecast_df = pd.DataFrame({
+    forecast_df_jpt = pd.DataFrame({
         'Date': forecast_index,
         'Forecasted Unique Postings': forecast_values
     })
-    st.download_button(label="Download CSV", data=forecast_df.to_csv(index=False), file_name="forecasted_job_postings.csv", mime="text/csv")
+    st.download_button(label="Download CSV", data=forecast_df_jpt.to_csv(index=False), file_name="forecasted_job_postings.csv", mime="text/csv")
 
 # **Add Expandable Description Section**
 with st.expander("Understanding the Results 📝"):
@@ -295,4 +295,4 @@ with st.expander("Understanding the Results 📝"):
 
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
-    st.dataframe(filtered_df[["Month", "Posting Intensity"]].reset_index(drop=True))
+    st.dataframe(filtered_df_jpt[["Month", "Posting Intensity"]].reset_index(drop=True))
