@@ -4,12 +4,19 @@ import altair as alt
 import os
 
 # Load Excel data
-#file_path = os.path.expanduser("~/Desktop/himu/Program_Overview_6046.xls")
 file_path = "D:/Project/Data_to_WebApp/data/Program_Overview_6046.xls"
 company_df = pd.read_excel(file_path, sheet_name="Job Postings Top Companies", skiprows=2, engine='xlrd')
 
 # Clean 'Median Posting Duration'
 company_df['Median Posting Duration'] = company_df['Median Posting Duration'].str.extract(r'(\d+)').astype(int)
+
+# General description
+st.title("Job Postings Dashboard for Top Companies in 2023")
+st.write("""
+This dashboard displays job posting data from the top companies for the year 2023. 
+It highlights the total number of job postings and the number of unique job postings for each company.
+The data can help you understand the job posting trends across various companies and the job market in general.
+""")
 
 # Selection for posting type
 posting_type = st.radio(
@@ -69,6 +76,12 @@ else:
 st.subheader(f"{posting_type} for Top {top_n} Companies in 2023" if posting_type != "Both" 
              else f"Total vs Unique Job Postings for Top {top_n} Companies in 2023")
 
+# Explanation of Postings
+st.write("""
+**Total Postings**: This refers to the total number of job postings published by a company during 2023.
+**Unique Postings**: This refers to the distinct job positions posted by the company, excluding any duplicate listings for the same role.
+""")
+
 # Company order
 company_order = chart_df.groupby('Company')['Postings'].sum().sort_values(ascending=False).index.tolist()
 
@@ -80,9 +93,7 @@ bar = alt.Chart(chart_df).mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4
             axis=alt.Axis(labelAngle=270, labelLimit=300)),
     y=alt.Y('Postings:Q', title='Number of Postings'),
     color=alt.Color('Posting Type:N',
-        scale=alt.Scale(domain=['Total Postings', 'Unique Postings'], range=['#4682B4', '#E97451']),
-        legend=alt.Legend(title="Posting Type")
-    ) if posting_type == "Both" else alt.ColorValue('#4682B4'),
+        scale=alt.Scale(domain=['Total Postings', 'Unique Postings'], range=['#4682B4', '#E97451'])),
     tooltip=[
         alt.Tooltip('Company:N'),
         alt.Tooltip('Postings:Q'),
@@ -93,8 +104,7 @@ bar = alt.Chart(chart_df).mark_bar(cornerRadiusTopLeft=4, cornerRadiusTopRight=4
 # Label data
 if posting_type == "Both":
     label_data = chart_df.groupby('Company').apply(
-        lambda x: x.loc[x['Postings'].idxmax()]
-    ).reset_index(drop=True)
+        lambda x: x.loc[x['Postings'].idxmax()]).reset_index(drop=True)
     label_data = label_data[['Company', 'Postings', 'Ratio']]
 else:
     label_data = chart_df.copy()
@@ -127,7 +137,6 @@ label_text = alt.Chart(label_data).mark_text(
     text=alt.Text('Ratio:N')
 )
 
-
 # Combine chart
 final_chart = (bar + label_text).properties(
     width=700,
@@ -143,6 +152,6 @@ st.altair_chart(final_chart, use_container_width=True)
 
 # Caption
 if posting_type == "Both":
-    st.caption(" The value shown on each bar is the ratio of Total to Unique Postings.")
+    st.caption("The value shown on each bar is the ratio of Total to Unique Postings.")
 else:
-    st.caption(" The value shown on each bar is the Median Posting Duration (in days).")
+    st.caption("The value shown on each bar is the Median Posting Duration (in days).")
