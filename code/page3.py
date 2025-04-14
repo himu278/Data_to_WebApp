@@ -29,7 +29,7 @@ st.markdown("""
         .header {
             text-align: center;
             padding: 40px;
-            background-color: #2980b9;  /* Blue background */
+            background-color: #2c3e50;
             color: white;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -88,7 +88,7 @@ st.markdown("""
         }
     </style>
     <div class="header fadeIn">
-        <h1>Job Postings Time Series Dashboard</h1>
+        <h1>Job Postings Time Series Analysis</h1>
         <p>Explore and analyze trends in job postings over time with detailed visualizations and forecasts.</p>
     </div>
 """, unsafe_allow_html=True)
@@ -97,10 +97,11 @@ st.markdown("""
 st.write("""
     This tool allows you to explore job posting trends over time and forecast future postings using a SARIMA model.
     You can filter the data by selecting a custom date range, fine-tune the model parameters, and view projected job posting trends.
+    The SARIMA model allows us to predict future data points based on past trends, considering both seasonality and trends in the data.
 """)
 
 # Date Range Picker
-st.write("### Step 1: Filter the Data by Date Range")
+st.write("### Filter the Data by Date Range")
 st.write("Select the start and end dates for the data you'd like to analyze.")
 min_date = df["Month"].min().date()
 max_date = df["Month"].max().date()
@@ -254,6 +255,44 @@ if st.button("Download Forecast Data as CSV"):
         'Forecasted Unique Postings': forecast_values
     })
     st.download_button(label="Download CSV", data=forecast_df.to_csv(index=False), file_name="forecasted_job_postings.csv", mime="text/csv")
+
+# **Add Expandable Description Section**
+with st.expander("Understanding the Results 📝"):
+    st.write("""
+    ### Job Postings Time Series:
+    - The primary graph above represents the **actual job postings** over time.
+    - The **X-axis** shows the **months**, while the **Y-axis** shows the **number of job postings**.
+    - The trend line helps visualize how the job postings have evolved over the period.
+
+    ### What is SARIMA?
+    - **SARIMA (Seasonal ARIMA)** is a time series forecasting model that captures the patterns of seasonality and trends in historical data.
+    - This model tries to predict future data points based on the observed patterns in the historical data.
+    - It uses three key parameters: **AR (AutoRegressive)**, **I (Integrated)**, and **MA (Moving Average)** for non-seasonal data, and similar seasonal components for modeling seasonality.
+
+    ### How to Interpret the Forecast Plot:
+    - **Actual Job Postings**: The plot represents the actual number of job postings over time.
+    - **Forecasted Job Postings**: The dashed red line shows the forecasted values for the next 12 months (or as per your selection).
+    - **Forecast Period**: This forecast predicts the future trend based on the historical data. The number of months you want to forecast can be adjusted using the "Forecast Steps" slider in the sidebar.
+
+    ### SARIMA Model Parameters:
+    - **AR (p)**: Controls the relationship between an observation and several lagged observations.
+    - **I (d)**: Defines the differencing method used to make the series stationary (eliminates trends).
+    - **MA (q)**: Models the relationship between an observation and a lagged forecast error.
+    - **Seasonal AR, I, MA (P, D, Q)**: These seasonal components are responsible for modeling periodic fluctuations over time (e.g., yearly cycles, monthly patterns).
+
+    ### How to Use the Model:
+    - You can use the sliders in the sidebar to experiment with different values for AR, I, MA, and the seasonal components.
+    - **Higher AR or MA values** might make the model more sensitive to trends, while **lower values** may generalize the forecast.
+    - By adjusting the seasonal periods, you can model different seasonal patterns, such as **yearly or monthly cycles**.
+
+    ### Download Forecast Data:
+    - You can download the forecasted data as a CSV file to further analyze or use in reports. Just click the "Download Forecast Data as CSV" button below the forecast plot.
+
+    ### Tips for Interpreting the Forecast:
+    - If your forecast looks very different from actual postings, you might need to adjust the model parameters.
+    - Look for any **seasonal trends**—for example, job postings might increase in certain months of the year, which the model should capture.
+    """)
+
 
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
