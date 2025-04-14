@@ -8,6 +8,9 @@ import os
 import time
 import streamlit.components.v1 as components  # To render the folium map
 
+# Suppress Streamlit warnings
+st.set_option('client.showErrorDetails', False)
+
 # Load the data
 file_path = "D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls"
 df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlrd')
@@ -64,10 +67,10 @@ def geocode_county(county):
         if location:
             return location.latitude, location.longitude
         else:
-            st.warning(f"Location not found for: {county}")
+            # Instead of showing a warning, just return None, None
             return None, None
     except Exception as e:
-        st.error(f"Error geocoding {county}: {e}")
+        # Instead of showing an error message, return None, None silently
         return None, None
 
 # Clean the county names
@@ -113,6 +116,14 @@ st.write("Hover over a marker for more details.")
 # Render the folium map using Streamlit components
 map_html = map_obj._repr_html_()  # Get the HTML representation of the map
 components.html(map_html, height=600)  # Display the map in Streamlit
+###
+st.markdown("""
+    <footer>
+        <p style="font-size:14px; color:gray;">Some locations cannot be located by this service.</p>
+    </footer>
+""", unsafe_allow_html=True)
+###
+
 
 ###
 # Create a selectbox for counties in the selected state
@@ -128,11 +139,6 @@ st.metric("Median Salary", f"${county_data['Median Annual Advertised Salary'].va
 st.metric("Unique Postings", f"{county_data['Unique Postings from Jan 2023 - Dec 2023'].values[0]:,}")
 st.metric("Posting Duration", f"{county_data['Median Posting Duration from Jan 2023 - Dec 2023'].values[0]} days")
 
-
-
-
-
-
 ###
 # Add visual chart for Median Salary, Median Posting Duration, and Unique Postings
 # First Plot - Median Salary
@@ -140,11 +146,24 @@ chart_1 = (
     alt.Chart(filtered_df)
     .mark_bar()
     .encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name'),
+        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
         y=alt.Y('Median Annual Advertised Salary:Q', title='Median Annual Advertised Salary'),
         color=alt.value('#4682B4')
     )
-    .properties(title='Median Annual Advertised Salary by County (2023)')
+    .properties(
+        title='Median Annual Advertised Salary by County (2023)',
+        width=800,  # Increase chart width
+        height=400  # Increase chart height for better spacing
+    )
+    .configure_axis(
+        labelFontSize=10,  # Reduce label font size for readability
+        titleFontSize=12
+    )
+    .configure_title(
+        fontSize=14,  # Set title font size
+        anchor='middle',  # Center the title
+        font='Helvetica'
+    )
     .interactive()
 )
 
@@ -153,11 +172,24 @@ chart_2 = (
     alt.Chart(filtered_df)
     .mark_bar()
     .encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name'),
+        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
         y=alt.Y('Unique Postings from Jan 2023 - Dec 2023:Q', title='Unique Job Postings (2023)'),
         color=alt.value('#E97451')
     )
-    .properties(title='Unique Job Postings by County (2023)')
+    .properties(
+        title='Unique Job Postings by County (2023)',
+        width=800,
+        height=400
+    )
+    .configure_axis(
+        labelFontSize=10,  # Reduce label font size for readability
+        titleFontSize=12
+    )
+    .configure_title(
+        fontSize=14,
+        anchor='middle',
+        font='Helvetica'
+    )
     .interactive()
 )
 
@@ -166,11 +198,24 @@ chart_3 = (
     alt.Chart(filtered_df)
     .mark_bar()
     .encode(
-        x=alt.X('County Name:N', sort='-y', title='County Name'),
+        x=alt.X('County Name:N', sort='-y', title='County Name', axis=alt.Axis(labelAngle=45)),  # Rotate labels
         y=alt.Y('Median Posting Duration from Jan 2023 - Dec 2023:Q', title='Median Posting Duration (2023)'),
         color=alt.value('#2ecc71')
     )
-    .properties(title='Median Posting Duration by County (2023)')
+    .properties(
+        title='Median Posting Duration by County (2023)',
+        width=800,
+        height=400
+    )
+    .configure_axis(
+        labelFontSize=10,  # Reduce label font size for readability
+        titleFontSize=12
+    )
+    .configure_title(
+        fontSize=14,
+        anchor='middle',
+        font='Helvetica'
+    )
     .interactive()
 )
 
