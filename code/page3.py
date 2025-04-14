@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Load the data
 @st.cache_data
@@ -37,15 +37,11 @@ end_date = pd.to_datetime(end_date)
 # Filtered data
 filtered_df = df[(df["Month"] >= start_date) & (df["Month"] <= end_date)]
 
-# Time series plot
+# Interactive Plotly Time Series Plot
 st.subheader("Unique Job Postings Over Time")
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.plot(filtered_df["Month"], filtered_df["Unique Postings"], marker='o')
-ax.set_xlabel("Month")
-ax.set_ylabel("Unique Postings")
-ax.set_title("Time Series of Unique Job Postings")
-ax.grid(True)
-st.pyplot(fig)
+fig = px.line(filtered_df, x="Month", y="Unique Postings", title="Time Series of Unique Job Postings", markers=True)
+fig.update_layout(xaxis_title="Month", yaxis_title="Unique Postings", template="plotly_dark")
+st.plotly_chart(fig)
 
 # Optional: Posting Intensity table
 if st.checkbox("Show Posting Intensity Table"):
