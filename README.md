@@ -5,7 +5,7 @@
 # Overview
 The STEM Jobs Insights Dashboard is an interactive multi-page application that provides comprehensive analysis of the U.S. STEM job landscape. This tool offers real-time visualization of company demand, geospatial insights, and temporal forecasting to help users understand trends in the STEM job market.
 
-> @ analysts, researchers, educators, and career navigators
+> @ analysts, researchers, educators, and career navigators # 🧠
 > @ STEM Jobs Insights
 ---
 
