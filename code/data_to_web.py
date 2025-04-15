@@ -704,8 +704,6 @@ elif page == "Job Postings Timeseries":
                             sarima_model = SARIMAX(filtered_df_jpt['log_postings'], 
                                                 order=(p, d, q),  # AR, I, MA terms
                                                 seasonal_order=(seasonal_p, seasonal_d, seasonal_q, seasonal_periods),  # Seasonal components
-                                                trend='ME',
-                                                maxiter=1000,  # Increase maximum iterations    
                                                 enforce_stationarity=False, 
                                                 enforce_invertibility=False)
 
