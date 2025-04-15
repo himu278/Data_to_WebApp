@@ -383,9 +383,10 @@ elif page == "Job Postings by Location":
 
 
     st.markdown("""
-        Now, let's dive into the job posting statistics. 
+        Now, let's dive into the job posting statistics for this state. 
         Below you will find visualizations that provide insights into the **median annual advertised salaries**, **unique job postings**, and **posting durations** across counties.
         Explore the charts to analyze trends and make data-driven decisions for your next career or business strategy.
+                
     """)
     ###
 
@@ -394,9 +395,10 @@ elif page == "Job Postings by Location":
     # Add description before the first chart - Median Salary
     st.markdown("""
         ### Median Annual Advertised Salary (2023)
-        This chart displays the **Median Annual Advertised Salary** for STEM-related job postings across different counties in the selected state. 
+        This chart displays the **Median Annual Advertised Salary** for STEM-related job postings across different counties in this state. 
         The height of each bar represents the median salary for job postings in each county, helping you to identify the regions with the highest and lowest salaries for STEM occupations.
         Use this chart to compare salary offerings across counties and find areas with the best-paying job opportunities in the STEM field.
+                
     """)
 
     # First Plot - Median Salary
@@ -433,6 +435,7 @@ elif page == "Job Postings by Location":
         This chart visualizes the **Unique Job Postings** for STEM occupations in each county. It shows the number of unique job postings from January to December 2023. 
         This data can help identify areas with a high volume of job opportunities, providing insights into the demand for STEM professionals in different regions.
         Use this chart to determine which counties have the greatest number of unique job postings in STEM fields.
+                
     """)
 
     # Second Plot - Unique Postings
@@ -470,6 +473,7 @@ elif page == "Job Postings by Location":
         This chart shows the **Median Posting Duration** for STEM-related job postings in each county from January to December 2023. The median posting duration indicates how long a job posting stays open before being filled. 
         A shorter duration suggests higher demand or faster hiring cycles, while a longer duration may indicate lower demand or a more selective hiring process. 
         Use this chart to identify which counties have the fastest job posting turnovers and to understand the hiring dynamics in STEM occupations.
+                
     """)
 
     # Third Plot - Median Posting Duration
