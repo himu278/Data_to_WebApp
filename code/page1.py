@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 import os
+from pathlib import Path
 
 # Load Excel data
-file_path = "D:/Project/Data_to_WebApp/data/Program_Overview_6046.xls"
+file_path = Path("D:/Project/Data_to_WebApp/data/Program_Overview_6046.xls")
 company_df = pd.read_excel(file_path, sheet_name="Job Postings Top Companies", skiprows=2, engine='xlrd')
 
 # Clean 'Median Posting Duration'

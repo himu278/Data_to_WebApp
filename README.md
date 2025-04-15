@@ -42,4 +42,15 @@ This dashboard turns raw Excel files into an intelligent decision support system
 
 ---
 
+### 🌟 Why This Project Matters
+🔍 
+Clean multi-page app design
+Modular Python structure
+Exploratory + predictive modeling
+
+📊 For Analysts & Researchers
+Provides state/county-level intelligence on job demand and wages.
+
+📈 For Planners & Policy Makers
+Supports decisions with actual labor data + forecast projections.
 

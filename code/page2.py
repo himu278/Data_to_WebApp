@@ -7,12 +7,13 @@ from folium.plugins import MarkerCluster, HeatMap
 import os
 import time
 import streamlit.components.v1 as components  # To render the folium map
+from pathlib import Path
 
 # Suppress Streamlit warnings
 st.set_option('client.showErrorDetails', False)
 
 # Load the data
-file_path = "D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls"
+file_path = Path("D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls")
 df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlrd')
 
 # Create the 'State Name' column by extracting state abbreviation

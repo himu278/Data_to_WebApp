@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from pathlib import Path
 
 # Load the data
 @st.cache_data
 def load_data():
-    file_path = "D:/Project/Data_to_WebApp/data/Job_Posting_Analytics_8_Occupations_in_3194_Counties_5318.xls"
+    file_path = Path("D:/Project/Data_to_WebApp/data/Job_Posting_Analytics_8_Occupations_in_3194_Counties_5318.xls")
     df_jpt = pd.read_excel(file_path, sheet_name="Job Postings Timeseries", engine='xlrd', skiprows=2)
     df_jpt = df_jpt.dropna(subset=["Month"])
     df_jpt["Month"] = pd.to_datetime(df_jpt["Month"], format="%b %Y")
