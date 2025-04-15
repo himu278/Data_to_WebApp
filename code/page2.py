@@ -13,7 +13,7 @@ from pathlib import Path
 st.set_option('client.showErrorDetails', False)
 
 # Load the data
-file_path = Path("D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls")
+file_path = Path("data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls")
 df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlrd')
 
 # Create the 'State Name' column by extracting state abbreviation
