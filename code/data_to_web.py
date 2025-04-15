@@ -199,7 +199,7 @@ elif page == "Job Postings by Location":
     df = df.dropna(subset=['Median Annual Advertised Salary'])
 
     # Set up Streamlit app - Make sure this is at the very top of your script
-    st.set_page_config(layout="wide")
+    #st.set_page_config(layout="wide")
     ###
     st.title("Welcome to the **STEM Job Postings dashboard**, a comprehensive platform for exploring job posting data across the United States.")
 
