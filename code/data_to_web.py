@@ -376,8 +376,13 @@ elif page == "Job Postings by Location":
     st.markdown("---")  # This adds a horizontal line divider
 
     # Add a section header indicating the completion of the map section
+    # st.markdown("""
+    #     ## Job Posting Statistics""")
+
+    st.markdown(f"### Job Posting Statistics for **{selected_state}** State")
+
+
     st.markdown("""
-        ## Job Posting Statistics
         Now, let's dive into the job posting statistics for the selected state. 
         Below you will find visualizations that provide insights into the **median annual advertised salaries**, **unique job postings**, and **posting durations** across counties.
         Explore the charts to analyze trends and make data-driven decisions for your next career or business strategy.
