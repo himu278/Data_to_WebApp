@@ -30,7 +30,7 @@ page = st.selectbox("Choose a Page", ["Job Postings Top Companies", "Job Posting
 if page == "Job Postings Top Companies":
 
     # Load Excel data
-    file_path = Path(r"D:/Project/Data_to_WebApp/data/Program_Overview_6046.xls")
+    file_path = Path("data/Program_Overview_6046.xls")
     company_df = pd.read_excel(file_path, sheet_name="Job Postings Top Companies", skiprows=2, engine='xlrd')
 
     # Clean 'Median Posting Duration'
@@ -189,7 +189,7 @@ elif page == "Job Postings by Location":
     st.set_option('client.showErrorDetails', False)
 
     # Load the data
-    file_path = Path(r"D:/Project/Data_to_WebApp/data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls")
+    file_path = Path("data/Job_Postings_by_Location_STEM_Occupations_SOC_2021_in_3194_Counties_8653.xls")
     df = pd.read_excel(file_path, sheet_name="Job Postings by Location", engine='xlrd')
 
     # Create the 'State Name' column by extracting state abbreviation
@@ -529,7 +529,7 @@ elif page == "Job Postings Timeseries":
     # Load the data
     @st.cache_data
     def load_data():
-        file_path = Path(r"D:/Project/Data_to_WebApp/data/Job_Posting_Analytics_8_Occupations_in_3194_Counties_5318.xls")
+        file_path = Path("data/Job_Posting_Analytics_8_Occupations_in_3194_Counties_5318.xls")
         df_jpt = pd.read_excel(file_path, sheet_name="Job Postings Timeseries", engine='xlrd', skiprows=2)
         df_jpt = df_jpt.dropna(subset=["Month"])
         df_jpt["Month"] = pd.to_datetime(df_jpt["Month"], format="%b %Y")
