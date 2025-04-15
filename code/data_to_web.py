@@ -19,6 +19,10 @@ st.set_page_config(layout="wide")
 # Add a "Choose a page" dropdown at the top
 page = st.selectbox("Choose a Page", ["Job Postings Top Companies", "Job Postings by Location", "Job Postings Timeseries"]) # Make page names as you like, ex page 1...
                     # I put here the excel Sheet name for each page.
+                    # Job Postings Top Companies
+                    # Job Postings by Location
+                    # Job Postings Timeseries
+                    
 ########################################################################
 # --- Job Postings Top Companies ---
 if page == "Job Postings Top Companies":
@@ -233,7 +237,9 @@ elif page == "Job Postings by Location":
     states = [state for state in states if pd.notnull(state)]
 
     # Sort and display the states in the sidebar with enhanced visibility
-    selected_state = st.sidebar.selectbox("Select a State", sorted(states), key="state_select")
+    #selected_state = st.sidebar.selectbox("Select a State", sorted(states), key="state_select")
+    selected_state = st.sidebar.selectbox("Select a State",sorted(states),key="state_select",help="Choose a U.S. state to view county-level STEM job posting data, including salary, volume, and duration.")
+
 
     # Filter by selected state
     filtered_df = df[df['State Name'] == selected_state]
