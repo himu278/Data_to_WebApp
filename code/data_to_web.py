@@ -727,7 +727,7 @@ elif page == "Job Postings Timeseries":
 
     # Forecast the next 'forecast_steps' months
     forecast = best_model.get_forecast(steps=forecast_steps)
-    forecast_index = pd.date_range(start=filtered_df_jpt['Month'].iloc[-1], periods=forecast_steps+1, freq='M')[1:]
+    forecast_index = pd.date_range(start=filtered_df_jpt['Month'].iloc[-1], periods=forecast_steps+1, freq='ME')[1:]
 
     # Convert forecasted values from log scale back to original scale
     forecast_values = np.exp(forecast.predicted_mean)
