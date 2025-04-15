@@ -237,9 +237,16 @@ elif page == "Job Postings by Location":
     states = [state for state in states if pd.notnull(state)]
 
     # Sort and display the states in the sidebar with enhanced visibility
-    #selected_state = st.sidebar.selectbox("Select a State", sorted(states), key="state_select")
-    selected_state = st.sidebar.selectbox("Select a State",sorted(states),key="state_select",help="Choose a U.S. state to view county-level STEM job posting data, including salary, volume, and duration.")
+    st.sidebar.markdown("### State Selection")
+    st.sidebar.markdown("Select a state to explore job data across its counties.")
 
+    selected_state = st.sidebar.selectbox(
+        "Select a State",
+        sorted(states),
+        key="state_select",
+        help="Choose a U.S. state to view county-level STEM job posting data."
+    )
+        
 
     # Filter by selected state
     filtered_df = df[df['State Name'] == selected_state]
